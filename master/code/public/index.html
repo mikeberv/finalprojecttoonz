@@ -1,0 +1,248 @@
+<!doctype html>
+<html>
+
+  <head>
+    <!-- input necessary sources, references, and stylesheets -->
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://developer.spotify.com/web-api/static/css/cached.css">
+    <link rel="stylesheet" type="text/css" href="stylz.css">
+    <title>TooNZ by EDM</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link href="emoji/lib/css/nanoscroller.css" rel="stylesheet">
+    <link href="emoji/lib/css/emoji.css" rel="stylesheet">
+  </head>
+
+
+  <body>
+    <div id= "logo"><img src="toonzlogo3.png" alt="Logo" ></img></div>
+
+    <!-- login screen template -->
+    <div class="container">
+      <div id="login">
+        <h2>Welcome to TooNZ, please log in using your Spotify username and password.</h2>
+        <div class= "loginbutton"><a href="/login" class="btn">Log in through Spotify</a></div>
+      </div>
+
+      <!-- logged in reference points -->
+      <div id="loggedin">
+        <div id="user-profile"></div>
+        <div id="oauth"></div>
+      </div>
+    </div>
+
+    <!-- main site template -->
+    <script id="user-profile-template" type="text/x-handlebars-template">
+      <div id= "loginbanner">
+        <h3>Logged in <span class= "color" style= "color: #FE8308;"> {{display_name}}</span></h3>
+      </div>
+      <div class="container">
+        <div class= "banner">
+          <div id= "playlist_search">
+            <h1>How are you feeling  <span class= "color" style= "color: #FE8308;"> {{display_name}}</span>? </h1>
+            <p>Choose an emoji from the drop down menu to search for a playlist that matches your mood. Then, click on any playlist from the results to play 30 seconds of its first track. To add the playlist to your Spotify account, click the plus button.</p>
+            
+            <!-- Emoji-picker -->
+            <form id="search-form">
+              <p class= "lead emoji-picker-container"><input type="text" id="query" value="" class="form-control" placeholder="Choose Your Emoji" data-emojiable= "true" font= "Yuanti SC" /></p>
+              <input type="submit" id="search" class="btn" value="Search toonZ"/>
+            </form>
+          </div>
+
+      <div id="results"></div>
+    </script>
+
+    <!-- results template for playlists -->
+    <script id="results-template" type="text/x-handlebars-template">
+      {{#each playlists.items}}
+        <div style="background-image:url({{images.0.url}})" data-playlist-id="{{id}}" class="cover" data-playlist-user="{{href}}">
+        <input type="submit" id="addtoplaylist" class="btn2" data-playlist-id-button="{{id}}" data-playlist-user-button="{{href}}" value="+"/></div>
+      {{/each}}
+    </script>
+
+    <script id="oauth-template" type="text/x-handlebars-template"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="emoji/lib/js/nanoscroller.min.js"></script>
+    <script src="emoji/lib/js/tether.min.js"></script>
+    <script src="emoji/lib/js/config.js"></script>
+    <script src="emoji/lib/js/util.js"></script>
+    <script src="emoji/lib/js/jquery.emojiarea.js"></script>
+    <script src="emoji/lib/js/emoji-picker.js"></script>
+
+    <script>
+      (function() {
+
+        //obtain parameters from the hash of the URL
+        function getHashParams() {
+          var hashParams = {};
+          var e, r = /([^&;=]+)=?([^&;]*)/g,
+              q = window.location.hash.substring(1);
+          while ( e = r.exec(q)) {
+             hashParams[e[1]] = decodeURIComponent(e[2]);
+          }
+          return hashParams;
+        }
+
+        // initialize variables for user profile 
+        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
+            userProfileTemplate = Handlebars.compile(userProfileSource),
+            userProfilePlaceholder = document.getElementById('user-profile');
+
+        // initialize variables for authorization
+        var oauthSource = document.getElementById('oauth-template').innerHTML,
+            oauthTemplate = Handlebars.compile(oauthSource),
+            oauthPlaceholder = document.getElementById('oauth');
+
+        var params = getHashParams();
+
+        // initialize variables for access token and refresh token
+        var access_token = params.access_token,
+            refresh_token = params.refresh_token,
+            error = params.error;
+
+        // ensure authentication is successful
+        if (error) {
+          alert('There was an error during the authentication');
+        } else {
+          if (access_token) {
+
+            // render oauth info
+            oauthPlaceholder.innerHTML = oauthTemplate({
+              access_token: access_token,
+              refresh_token: refresh_token
+            });
+
+            // authorize access to user account
+            $.ajax({
+                url: 'https://api.spotify.com/v1/me',
+                headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+
+                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+
+                  // display main site page when logged in
+                  $('#login').hide();
+                  $('#loggedin').show();
+                  $('#playlist_search').show();
+
+                  // initialize and create emoji set
+                  window.emojiPicker = new EmojiPicker({
+                    emojiable_selector: '[data-emojiable=true]',
+                    assetsPath: 'emoji/lib/img/',
+                    popupButtonClasses: 'fa fa-smile-o'
+                  });
+
+                  // convert input fields to emoji pickers
+                  window.emojiPicker.discover();
+
+                  // find template for albulm display and compile it
+                  var templateSource = document.getElementById('results-template').innerHTML,
+                    template = Handlebars.compile(templateSource),
+                    resultsPlaceholder = document.getElementById('results'),
+                    playingCssClass = 'playing',
+                    audioObject = null;
+
+                  // retreive tracks from playlist url given current access token
+                  var fetchTracks = function(playlistId, addUserId, callback) {
+                     $.ajax({
+                      url: addUserId + '/tracks',
+                      data: {
+                        'access_token': access_token
+                      },
+                      success: function(response) {
+                        callback(response);
+                      }
+                    });
+                  };
+
+                  // search playlists for given input
+                  var searchPlaylists = function(query) {
+                    $.ajax({
+                      url: 'https://api.spotify.com/v1/search',
+                      data: {
+                        q: query,
+                        type: 'playlist'
+                      },
+                      // upon success render results template with playlists
+                      success: function(response) {
+                        resultsPlaceholder.innerHTML = template(response);
+                      }
+                    });
+                  };
+
+                  var addPlaylists = function(playlistId, addUserId) {
+                    $.ajax({
+                      method: 'PUT',
+                      url: addUserId + '/followers',
+                      headers: {
+                        'Authorization': 'Bearer ' + access_token,
+                        'Content-Type': 'application/json'
+                      },
+
+                      success: function(callback) {
+                        console.log('create playlist');
+                      }
+                    });
+                  };
+
+                  // play first track of playlist when cover is clicked
+                  results.addEventListener('click', function(e) {
+                    var target = e.target;
+
+                    if (target !== null && target.classList.contains('btn2')){
+                        addPlaylists(target.getAttribute('data-playlist-id-button'), target.getAttribute('data-playlist-user-button'));
+                    }
+
+                    if (target !== null && target.classList.contains('cover')) {
+                      if (target.classList.contains(playingCssClass)) {
+                        audioObject.pause();
+                      } else {
+                        if (audioObject) {
+                          audioObject.pause();
+                        }
+                        fetchTracks(target.getAttribute('data-playlist-id'), target.getAttribute('data-playlist-user'), function(data) {
+                          for (var i = 0; i < data.items.length; i++) {
+                            if(data.items[i].track.preview_url != null){
+                              audioObject = new Audio(data.items[i].track.preview_url);
+                              break;
+                            }
+                          }
+                          audioObject.play();
+                          target.classList.add(playingCssClass);
+                          audioObject.addEventListener('ended', function() {
+                            target.classList.remove(playingCssClass);
+                          });
+                          audioObject.addEventListener('pause', function() {
+                            target.classList.remove(playingCssClass);
+                          });
+                        });
+                      }
+                    }
+                  });
+
+                  // find playlists corresponding to emoji search
+                  document.getElementById('search-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    searchPlaylists(document.getElementById('query').value);
+                  }, false);
+                }
+            });
+
+          } else {
+              // render initial login screen if not logged in
+              $('#login').show();
+              $('#loggedin').hide();
+              $('#playlist_search').hide();
+          }
+        }
+      })();
+
+    </script>
+  </body>
+
+</html>

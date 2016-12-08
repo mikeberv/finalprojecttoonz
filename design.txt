@@ -1,0 +1,36 @@
+
+ToonZ DESIGN: 
+
+When designing our project we made use of Spotify API and source code for an "Emoji-picker" input bar.
+Spotify API helps grant us access to a user's Spotify account information and to all of Spotify's 
+music. The Emoji-picker code allows us to give users the option to input an emoji (assuming that they 
+may be accessing our site on a computer without an emoji keyboard). 
+
+In our code, we first guarantee that we (through Spotify documentation/login functional) authenticate a 
+user and get authorization to access a user's data. We have made sure to only display the main page of our 
+site once the user is in fact logged-in, otherwise the login page is displayed and the logged-in page, hidden. 
+Following this, we implement the code that recognizes our input search bar as an "Emoji-picker". We have 
+customized this picker by first editing out all the irrelevant emojis and then reassigning string values to 
+those we hoped to include within the picker. This allowed us to control which playlists would appear 
+given the emoji typed in (essentially assigning music genres and moods to appropriate emojis). 
+Although more style then design, we sought to shrink down the search bar width in order to reflect the 
+simple operation of choosing a single emoji- as opposed to the user having to write out anything long to 
+find a playlist. 
+
+Once the search button is clicked by the user, a listener queries Spotify's relevant playlists
+(as by the searchPlaylists function) given the encrypted meaning of the emoji. These playlists are then rendered 
+in a results template below the search bar. This template follows handlesbar template. Within this template the
+covers of the most relevant Spotify playlists are displayed for the user. This image-strong style reflects
+the overall accessibility of TOONZ, which makes sure to use text minimally. 
+
+Once the results are displayed, we have implemented another listener for when a cover is clicked. If this click 
+is contained on the cover and music is not already playing, then a 30 second preview from the first song will play 
+(as by the fetchTracks function). Otherwise, if music is playing and a new cover is clicked the currently playing 
+music will pause and the new playlist will stop. Lastly, if music is playing and the same cover is clicked, music
+will pause altogether. The fetchTracks function makes use of the playlist-id and playlist-user information in order
+to callback and fetch tracks from the correct Spotify playlist. 
+
+Finally, users have the option to follow a queried playlist on their Spotify account. A listener for the "+" button
+initiates the addPlaylist function. This function uses the current user's info and through a PUT method, makes the
+current user a follower to playlist. 
+

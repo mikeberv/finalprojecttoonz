@@ -1,0 +1,167 @@
+
+body {
+	background: #A9A9A9 url('background.png');
+	padding: 150px;
+    display: block;
+    margin: 0 auto;
+   	text-align: center;
+}
+
+h1 {
+	color: white;
+	font-family: Adobe Gothic Std;
+	text-shadow: 1px 1px #000000;
+	font-size: 40px;
+	margin: 0 auto;
+	padding-bottom: 40px;
+}
+
+h2 {
+	display: block;
+	color: white;
+	font-family: Yuanti SC;
+	font-size: 24px;
+	margin: 0 auto;
+	padding-bottom: 50px;
+
+}
+
+h3 {
+	color: white;
+	font-family: Yuanti SC;
+	font-size: 24px;
+	position:absolute;
+   	top: 0;
+   	right: 20px;
+}
+
+p {
+	color: white;
+	font-size: 22px;
+	font-family: Yuanti SC;
+	padding-bottom: 30px;
+}
+
+.banner {
+	
+	padding: 50px;
+	width: full;
+  	background-color: #000000;
+  	background: rgb(204, 204, 204);
+    background: rgba(204, 204, 204, 0.4);
+  	position: absolute;
+  	right: 0;
+  	left: 0;
+}
+
+.lead {
+	width: 200px;
+	height: 45px;
+	margin: 0 auto;
+	padding-bottom: 70px;
+
+}
+
+.btn {
+	background-color: #FE8308;
+	border: none;
+	box-shadow: 1px 1px #000000;
+	color: white;
+	padding: 20px 37px;
+	text-align: center;
+	margin: auto;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 20px;
+	font-family: Yuanti SC;
+ }
+
+.btn:hover{
+	background: #FEB200;
+	color: #FEB200;
+	color: white;
+	padding: 20px 37px;
+	text-align: center;
+	margin: auto;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 20px;
+	font-family: Yuanti SC;
+
+}
+
+.btn2 {
+	background-color: #FE8308;
+	border: #ffffff;
+	border-style: solid;
+	border-width: 2px;
+	box-shadow: 1px 1px #000000;
+	color: white;
+	padding: 10px 25px;
+	text-align: center;
+	margin-left: 200px;
+	margin-top: 200px;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 40px;
+	font-family: Yuanti SC;
+ }
+
+ .btn2:hover{
+	background: #FEB200;
+	color: #FEB200;
+	border-style: solid;
+	border-width: 2px;
+	box-shadow: 1px 1px #000000;
+	color: white;
+	padding: 10px 25px;
+	text-align: center;
+	margin-left: 200px;
+	margin-top: 200px;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 40px;
+	font-family: Yuanti SC;
+}
+
+.cover {
+	width: 300px;
+	height: 300px;
+	display: inline-block;
+	background-size: cover;
+}
+
+.cover:hover {
+	cursor: pointer;
+}
+.cover.playing {
+	border: 5px solid #e45343;
+}
+
+.text-overflow {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 500px;
+}
+
+
+#logo {
+	display: block;
+	width:70%;
+	max-width: 700px;
+	min-width: 550px;
+	margin: 0 auto;
+	position: relative;
+	top: -30px;
+	padding-bottom: 40px;
+}
+
+#search-form, .form-control {
+	margin-bottom: 20px;
+}
+
+#login, #loggedin, #playlist_search {
+	display: none;
+}
+
